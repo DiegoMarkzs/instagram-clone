@@ -10,6 +10,8 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -19,6 +21,7 @@ import br.edu.ifpb.instagram.model.entity.UserEntity;
 import br.edu.ifpb.instagram.repository.UserRepository;
 
 @SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class UserServiceImplTest {
 
     @MockitoBean
@@ -69,4 +72,38 @@ public class UserServiceImplTest {
         // Verificar a interação com o mock
         verify(userRepository, times(1)).findById(userId);
     }
+
+     //faça no minimo 2 testes
+
+    //@Teste
+    //Carina
+    void create_MODELO(){
+
+    }
+    
+    //@Teste
+    //Winiicius
+    void update_MODELO(){
+
+    }
+
+    //@Teste
+    //Beatriz
+    void findAll_MODELO(){
+
+    }
+
+    //@Teste
+    //Yasmiiiin
+    void delete_MODELO(){
+
+    }
+
+    
+    
+
+
+
+
+    
 }
