@@ -3,6 +3,9 @@ package br.edu.ifpb.instagram.service.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -93,17 +96,56 @@ public class UserServiceImplTest {
 
     }
 
-    //@Teste
-    //Yasmiiiin
-    void delete_MODELO(){
+    @Test
+    void testDeleteUser_WhenExists_DeletesUser() {
+        Long userId = 1L;
+        UserEntity mockUserEntity = new UserEntity();
+        mockUserEntity.setId(userId);
 
+        when(userRepository.findById(userId)).thenReturn(Optional.of(mockUserEntity));
+
+        userService.deleteUser(userId);
+
+        verify(userRepository, times(1)).delete(mockUserEntity);
     }
 
-    
-    
+    @Test
+    void testDeleteUser_WhenNotFound_ThrowsException() {
+        Long userId = 999L;
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            userService.deleteUser(userId);
+        });
 
+        assertEquals("User not found", exception.getMessage());
+        verify(userRepository, never()).delete(any());
+    }
 
+    @Test
+    void testDeleteUser_WhenRepositoryFails_ThrowsException() {
+        Long userId = 2L;
+        UserEntity mockUserEntity = new UserEntity();
+        mockUserEntity.setId(userId);
 
-    
+        when(userRepository.findById(userId)).thenReturn(Optional.of(mockUserEntity));
+        doThrow(new RuntimeException("DB error")).when(userRepository).delete(mockUserEntity);
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            userService.deleteUser(userId);
+        });
+
+        assertEquals("DB error", exception.getMessage());
+        verify(userRepository, times(1)).delete(mockUserEntity);
+    }
+
+    @Test
+    void testDeleteUser_WhenIdIsNull_ThrowsException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            userService.deleteUser(null);
+        });
+
+        verify(userRepository, never()).findById(any());
+        verify(userRepository, never()).delete(any());
+    }
 }
