@@ -90,7 +90,34 @@ public class UserServiceImplTest {
     //@Teste
     //Beatriz
     void findAll_MODELO(){
-
+        UserEntity mockUserEntity1 = new UserEntity();
+        mockUserEntity1.setId(1L);
+        mockUserEntity1.setFullName("Beatriz");
+        mockUserEntity1.setEmail("beatriz.z@gmail.com");
+    
+        UserEntity mockUserEntity2 = new UserEntity();
+        mockUserEntity2.setId(2L);
+        mockUserEntity2.setFullName("Maria Silva");
+        mockUserEntity2.setEmail("maria@silva.dev");
+    
+        List<UserEntity> users = List.of(mockUserEntity1, mockUserEntity2);
+    
+        when(userRepository.findAll()).thenReturn(users);
+    
+        List<UserDto> result = userService.findAll();
+    
+        assertNotNull(result);
+        assertEquals(2, result.size());
+    
+        assertEquals(mockUserEntity1.getId(), result.get(0).id());
+        assertEquals(mockUserEntity1.getFullName(), result.get(0).fullName());
+        assertEquals(mockUserEntity1.getEmail(), result.get(0).email());
+    
+        assertEquals(mockUserEntity2.getId(), result.get(1).id());
+        assertEquals(mockUserEntity2.getFullName(), result.get(1).fullName());
+        assertEquals(mockUserEntity2.getEmail(), result.get(1).email());
+    
+        verify(userRepository, times(1)).findAll();
     }
 
     //@Teste
