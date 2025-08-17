@@ -25,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import br.edu.ifpb.instagram.exception.FieldAlreadyExistsException;
 import br.edu.ifpb.instagram.model.dto.UserDto;
 import br.edu.ifpb.instagram.model.entity.UserEntity;
 import br.edu.ifpb.instagram.repository.UserRepository;
@@ -41,8 +42,7 @@ public class UserServiceImplTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
-
-    //@Test
+    // @Test
     void testFindById_ReturnsUserDto() {
         // Configurar o comportamento do mock
         Long userId = 1L;
@@ -67,7 +67,7 @@ public class UserServiceImplTest {
         verify(userRepository, times(1)).findById(userId);
     }
 
-    //@Test
+    // @Test
     void testFindById_ThrowsExceptionWhenUserNotFound() {
         // Configurar o comportamento do mock
         Long userId = 999L;
@@ -85,16 +85,88 @@ public class UserServiceImplTest {
         verify(userRepository, times(1)).findById(userId);
     }
 
-     //faça no minimo 2 testes
+    // faça no minimo 2 testes
 
-    //@Teste
-    //Carina
-    void create_MODELO(){
+    // Carina
+    @Test
+    void createUser_WhenValidUser_PersistAndReturnDTO() {
+
+        UserDto userDto = new UserDto(
+                1L,
+                "New Name",
+                "new_username",
+                "new@email.com",
+                "newPassword",
+                null);
+
+        when(userRepository.existsByEmail(userDto.email())).thenReturn(false);
+        when(userRepository.existsByUsername(userDto.username())).thenReturn(false);
+        when(passwordEncoder.encode(userDto.password())).thenReturn("encodedPassword");
+
+        UserEntity savedEntity = new UserEntity();
+        savedEntity.setId(1L);
+        savedEntity.setUsername(userDto.username());
+        savedEntity.setEmail(userDto.email());
+        savedEntity.setFullName(userDto.fullName());
+        savedEntity.setEncryptedPassword("encodedPassword");
+
+        when(userRepository.save(any(UserEntity.class))).thenReturn(savedEntity);
+
+        UserDto result = userService.createUser(userDto);
+
+        assertNotNull(result);
+        assertEquals(userDto.username(), result.username());
+        assertEquals(userDto.email(), result.email());
+        assertEquals(userDto.fullName(), result.fullName());
+
+        verify(passwordEncoder).encode(userDto.password());
+        verify(userRepository).save(any(UserEntity.class));
 
     }
 
-    //Winiicius
-     //@Test
+    @Test
+    void createUser_WhenEmailExists_ThrowsFieldAlreadyExistsException() {
+        UserDto userDto = new UserDto(
+                1L,
+                "New Name",
+                "new_username",
+                "new@email.com",
+                "newPassword",
+                null);
+        
+        when(userRepository.existsByEmail(userDto.email())).thenReturn(true);
+
+        assertThrows(FieldAlreadyExistsException.class,
+                () -> userService.createUser(userDto));
+
+        verify(userRepository).existsByEmail(userDto.email());
+        verify(userRepository, never()).save(any());
+
+    }  
+    
+    @Test
+    void shouldThrowException_WhenUsernameAlreadyExists() {
+        UserDto userDto = new UserDto(
+                1L,
+                "New Name",
+                "new_username",
+                "new@email.com",
+                "newPassword",
+                null);
+
+        when(userRepository.existsByEmail(userDto.email())).thenReturn(false);
+        when(userRepository.existsByUsername(userDto.username())).thenReturn(true);
+
+        assertThrows(FieldAlreadyExistsException.class,
+                () -> userService.createUser(userDto));
+
+        verify(userRepository).existsByUsername(userDto.username());
+        verify(userRepository, never()).save(any());
+    }
+
+
+    // Winiicius
+    // @Test
     void updateUser_withValidDataAndPassword_shouldUpdateAndReturnDto() {
 
         var existingUser = new UserEntity();
@@ -110,8 +182,7 @@ public class UserServiceImplTest {
                 "new_username",
                 "new@email.com",
                 "newPassword",
-                null
-        );
+                null);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
         when(passwordEncoder.encode("newPassword")).thenReturn("encodedPassword");
@@ -137,7 +208,7 @@ public class UserServiceImplTest {
         verify(userRepository).save(any(UserEntity.class));
     }
 
-    //@Test
+    // @Test
     void updateUser_withValidDataAndEmptyPassword_shouldUpdateOtherFieldsOnly() {
         // Usuário existente
         var existingUser = new UserEntity();
@@ -154,8 +225,7 @@ public class UserServiceImplTest {
                 "new_username",
                 "new@email.com",
                 null, // senha nula
-                null
-        );
+                null);
 
         // Configurar mocks
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
@@ -184,7 +254,7 @@ public class UserServiceImplTest {
         verify(passwordEncoder, times(0)).encode(any());
     }
 
-   // @Test
+    // @Test
     void updateUser_shouldThrowExceptionWhenUserDtoIsNull() {
         // Executar o método com null e verificar exceção
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -199,19 +269,16 @@ public class UserServiceImplTest {
         verifyNoInteractions(passwordEncoder);
     }
 
-    
-
-    //@Test
+    // @Test
     void updateUser_shouldThrowExceptionWhenUserIdIsNull() {
         // Criar um UserDto com id null
         UserDto userDto = new UserDto(
-                null,              // id null
+                null, // id null
                 "New Name",
                 "new_username",
                 "new@email.com",
                 "newPassword",
-                null
-        );
+                null);
 
         // Executar o método e verificar exceção
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -226,10 +293,9 @@ public class UserServiceImplTest {
         verifyNoInteractions(passwordEncoder);
     }
 
+    // Sucesso
 
-    //Sucesso
-
-    //@Test
+    // @Test
     void updateUser_shouldThrowExceptionWhenUserNotFound() {
         Long userId = 999L;
 
@@ -239,8 +305,7 @@ public class UserServiceImplTest {
                 "new_username",
                 "new@email.com",
                 "newPassword",
-                null
-        );
+                null);
 
         // Simular usuário não encontrado
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
@@ -260,44 +325,43 @@ public class UserServiceImplTest {
         verifyNoInteractions(passwordEncoder);
     }
 
-    //Sucesso
-    
-    //@Test
-    //Beatriz
-   void findAll_MODELO(){
+    // Sucesso
+
+    // @Test
+    // Beatriz
+    void findAll_MODELO() {
         UserEntity mockUserEntity1 = new UserEntity();
         mockUserEntity1.setId(1L);
         mockUserEntity1.setFullName("Beatriz");
         mockUserEntity1.setEmail("beatriz.z@gmail.com");
-    
+
         UserEntity mockUserEntity2 = new UserEntity();
         mockUserEntity2.setId(2L);
         mockUserEntity2.setFullName("Maria Silva");
         mockUserEntity2.setEmail("maria@silva.dev");
-    
+
         List<UserEntity> users = List.of(mockUserEntity1, mockUserEntity2);
-    
+
         when(userRepository.findAll()).thenReturn(users);
-    
+
         List<UserDto> result = userService.findAll();
-    
+
         assertNotNull(result);
         assertEquals(2, result.size());
-    
+
         assertEquals(mockUserEntity1.getId(), result.get(0).id());
         assertEquals(mockUserEntity1.getFullName(), result.get(0).fullName());
         assertEquals(mockUserEntity1.getEmail(), result.get(0).email());
-    
+
         assertEquals(mockUserEntity2.getId(), result.get(1).id());
         assertEquals(mockUserEntity2.getFullName(), result.get(1).fullName());
         assertEquals(mockUserEntity2.getEmail(), result.get(1).email());
-    
+
         verify(userRepository, times(1)).findAll();
     }
 
-    
-    //Yasmiiiin
-    //@Test
+    // Yasmiiiin
+    // @Test
     void testDeleteUser_WhenExists_DeletesUser() {
         Long userId = 1L;
         UserEntity mockUserEntity = new UserEntity();
@@ -310,7 +374,7 @@ public class UserServiceImplTest {
         verify(userRepository, times(1)).delete(mockUserEntity);
     }
 
-   // @Test
+    // @Test
     void testDeleteUser_WhenNotFound_ThrowsException() {
         Long userId = 999L;
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
@@ -323,7 +387,7 @@ public class UserServiceImplTest {
         verify(userRepository, never()).delete(any());
     }
 
-   // @Test
+    // @Test
     void testDeleteUser_WhenRepositoryFails_ThrowsException() {
         Long userId = 2L;
         UserEntity mockUserEntity = new UserEntity();
@@ -340,7 +404,7 @@ public class UserServiceImplTest {
         verify(userRepository, times(1)).delete(mockUserEntity);
     }
 
-   // @Test
+    // @Test
     void testDeleteUser_WhenIdIsNull_ThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
             userService.deleteUser(null);
@@ -350,10 +414,4 @@ public class UserServiceImplTest {
         verify(userRepository, never()).delete(any());
     }
 
-    
-
-
-
-
-    
 }
