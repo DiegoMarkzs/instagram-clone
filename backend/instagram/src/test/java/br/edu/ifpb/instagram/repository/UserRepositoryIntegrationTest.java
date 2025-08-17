@@ -12,8 +12,30 @@ public class UserRepositoryIntegrationTest {
     @Autowired
     UserRepository userRepository;
 
+    //CREATE
     //@Test
+    //Carina
     void DadoUsuario_quandoSalvar_PersistirNoBanco(){
+
+    }
+
+    //UPDATE
+    //@Test
+    //Winiicius
+    void DadoUsuario_quandoAtualizar_AtualizarNoBanco(){
+
+    }
+
+
+    //DELETE
+    //Yasmiiin
+    void DadoUsuario_quandoDeletar_DeletarNoBanco(){
+
+    }
+
+    //READ
+    //Beatriz
+    void DadoUsuario_QuandoBuscarPorId_RetornarUsuario(){
 
     }
 

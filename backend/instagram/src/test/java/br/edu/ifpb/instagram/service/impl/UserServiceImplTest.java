@@ -199,6 +199,8 @@ public class UserServiceImplTest {
         verifyNoInteractions(passwordEncoder);
     }
 
+    
+
     //@Test
     void updateUser_shouldThrowExceptionWhenUserIdIsNull() {
         // Criar um UserDto com id null
@@ -223,6 +225,9 @@ public class UserServiceImplTest {
         verifyNoInteractions(userRepository);
         verifyNoInteractions(passwordEncoder);
     }
+
+
+    //Sucesso
 
     //@Test
     void updateUser_shouldThrowExceptionWhenUserNotFound() {
@@ -255,7 +260,9 @@ public class UserServiceImplTest {
         verifyNoInteractions(passwordEncoder);
     }
 
-    @Test
+    //Sucesso
+    
+    //@Test
     //Beatriz
    void findAll_MODELO(){
         UserEntity mockUserEntity1 = new UserEntity();
@@ -343,7 +350,6 @@ public class UserServiceImplTest {
         verify(userRepository, never()).delete(any());
     }
 
-    
     
 
 
