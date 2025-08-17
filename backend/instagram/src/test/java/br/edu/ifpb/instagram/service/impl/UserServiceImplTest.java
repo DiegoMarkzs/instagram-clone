@@ -113,20 +113,17 @@ public class UserServiceImplTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
         when(passwordEncoder.encode("newPassword")).thenReturn("encodedPassword");
 
-        // simulando o comportamento do save
         when(userRepository.save(any(UserEntity.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         UserDto result = userService.updateUser(userDto);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1L, result.id());
         assertEquals("New Name", result.fullName());
         assertEquals("new_username", result.username());
         assertEquals("new@email.com", result.email());
 
-        // password e encryptedPassword sempre são null pelo mapToDto
         assertEquals(null, result.encryptedPassword());
         assertEquals(null, result.password());
 
@@ -136,7 +133,6 @@ public class UserServiceImplTest {
 
     @Test
     void updateUser_withValidDataAndEmptyPassword_shouldUpdateOtherFieldsOnly() {
-        // Usuário existente
         var existingUser = new UserEntity();
         existingUser.setId(1L);
         existingUser.setFullName("Old Name");
@@ -144,77 +140,63 @@ public class UserServiceImplTest {
         existingUser.setEmail("old@email.com");
         existingUser.setEncryptedPassword("oldEncryptedPassword");
 
-        // DTO de entrada com password null (poderia testar também vazio "")
         UserDto userDto = new UserDto(
                 1L,
                 "New Name",
                 "new_username",
                 "new@email.com",
-                null, // senha nula
+                null,
                 null);
 
-        // Configurar mocks
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
         when(userRepository.save(any(UserEntity.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Executar método
         UserDto result = userService.updateUser(userDto);
 
-        // Asserts
         assertNotNull(result);
         assertEquals(1L, result.id());
         assertEquals("New Name", result.fullName());
         assertEquals("new_username", result.username());
         assertEquals("new@email.com", result.email());
 
-        // password e encryptedPassword sempre nulos pelo mapToDto
         assertNull(result.password());
         assertNull(result.encryptedPassword());
 
-        // Verificar interações
         verify(userRepository).findById(1L);
         verify(userRepository).save(any(UserEntity.class));
 
-        // passwordEncoder não deve ser chamado
         verify(passwordEncoder, times(0)).encode(any());
     }
 
     @Test
     void updateUser_shouldThrowExceptionWhenUserDtoIsNull() {
-        // Executar o método com null e verificar exceção
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             userService.updateUser(null);
         });
 
-        // Validar a mensagem da exceção
         assertEquals("UserDto or UserDto.id must not be null", exception.getMessage());
 
-        // Não deve interagir com o repository nem com o encoder
         verifyNoInteractions(userRepository);
         verifyNoInteractions(passwordEncoder);
     }
 
     @Test
     void updateUser_shouldThrowExceptionWhenUserIdIsNull() {
-        // Criar um UserDto com id null
         UserDto userDto = new UserDto(
-                null, // id null
+                null,
                 "New Name",
                 "new_username",
                 "new@email.com",
                 "newPassword",
                 null);
 
-        // Executar o método e verificar exceção
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             userService.updateUser(userDto);
         });
 
-        // Validar a mensagem da exceção
         assertEquals("UserDto or UserDto.id must not be null", exception.getMessage());
 
-        // Não deve interagir com o repository nem com o encoder
         verifyNoInteractions(userRepository);
         verifyNoInteractions(passwordEncoder);
     }
@@ -231,21 +213,16 @@ public class UserServiceImplTest {
                 "newPassword",
                 null);
 
-        // Simular usuário não encontrado
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        // Executar o método e verificar exceção
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             userService.updateUser(userDto);
         });
 
-        // Validar a mensagem da exceção
         assertEquals("User not found with id: " + userId, exception.getMessage());
 
-        // Verificar que findById foi chamado
         verify(userRepository).findById(userId);
 
-        // Nenhuma interação com o encoder ou save
         verifyNoInteractions(passwordEncoder);
     }
 
