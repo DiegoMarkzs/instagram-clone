@@ -8,23 +8,14 @@ public class UserRepositoryIntegrationTest {
     @Autowired
     UserRepository userRepository;
 
-    //@Test
-    void DadoUsuario_quandoSalvar_PersistirNoBanco(){
-
-    }   
-
     void DadoUsuario_QuandoBuscarPorId_RetornarUsuario(){
-User usuario = new User();
-        usuario.setNome("Maria");
-        usuario.setEmail("maria@email.com");
-        usuario.setSenha("123456");
-        usuario = userRepository.save(usuario);
+when(userService.findById(1L)).thenReturn(new UserDTO(1L, "maria", "maria@email.com"));
 
-        Optional<User> usuarioEncontrado = userRepository.findById(usuario.getId());
-        assertTrue(usuarioEncontrado.isPresent());
-        assertEquals("Maria", usuarioEncontrado.get().getNome());
-        assertEquals("maria@email.com", usuarioEncontrado.get().getEmail());
-
+        mvc.perform(get("/api/users/1"))
+           .andExpect(status().isOk())
+           .andExpect(jsonPath("$.id").value(1))
+           .andExpect(jsonPath("$.name").value("maria"));
+   
 }
 
 }
