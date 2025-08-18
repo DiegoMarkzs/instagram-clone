@@ -16,15 +16,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-
 import br.edu.ifpb.instagram.exception.FieldAlreadyExistsException;
 import br.edu.ifpb.instagram.model.dto.UserDto;
 import br.edu.ifpb.instagram.model.entity.UserEntity;
@@ -163,7 +159,25 @@ public class UserServiceImplTest {
         verify(userRepository).existsByUsername(userDto.username());
         verify(userRepository, never()).save(any());
     }
+    
+    @Test
+    void shouldThrowException_WhenFullNameIsNull() {
+        UserDto userDto = new UserDto(
+                1L,
+                null,
+                "new_username",
+                "new@email.com",
+                "newPassword",
+                null);
 
+        when(userRepository.existsByEmail(userDto.email())).thenReturn(false);
+        when(userRepository.existsByUsername(userDto.username())).thenReturn(false);
+
+        assertThrows(DataIntegrityViolationException.class,
+                () -> userService.createUser(userDto));
+
+        verify(userRepository, never()).save(any());
+    }
 
     // Winiicius
     // @Test
@@ -394,11 +408,4 @@ public class UserServiceImplTest {
         assertEquals("DB error", exception.getMessage());
         verify(userRepository, times(1)).deleteById(userId);
     }
-
-    
-
-
-
-
-    
 }
