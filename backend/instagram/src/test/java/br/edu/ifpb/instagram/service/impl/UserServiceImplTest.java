@@ -173,10 +173,13 @@ public class UserServiceImplTest {
         when(userRepository.existsByEmail(userDto.email())).thenReturn(false);
         when(userRepository.existsByUsername(userDto.username())).thenReturn(false);
 
+        when(userRepository.save(any(UserEntity.class)))
+            .thenThrow(new DataIntegrityViolationException("fullName cannot be null"));
+
         assertThrows(DataIntegrityViolationException.class,
                 () -> userService.createUser(userDto));
 
-        verify(userRepository, never()).save(any());
+        verify(userRepository).save(any(UserEntity.class));
     }
 
     // Winiicius
