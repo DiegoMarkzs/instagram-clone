@@ -342,7 +342,7 @@ public class UserServiceImplTest {
 
     @Test
     // Beatriz
-    void findAll_MODELO() {
+    void findAll() {
         UserEntity mockUserEntity1 = new UserEntity();
         mockUserEntity1.setId(1L);
         mockUserEntity1.setFullName("Beatriz");
