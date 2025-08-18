@@ -80,7 +80,9 @@ public class UserRepositoryIntegrationTest {
 
     }
 
-    @Test
+    //Deveria ser um teste de READ, no final da classe tem o metodo
+    //Beatriz
+    //@Test
     void DadoUsuarioComFullNameNulo_quandoSalvar_DeveLancarExcecao() {
         UserEntity user = new UserEntity();
         user.setUsername("user1");
