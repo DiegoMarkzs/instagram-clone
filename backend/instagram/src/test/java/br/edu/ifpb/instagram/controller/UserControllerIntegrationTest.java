@@ -39,34 +39,29 @@ public class UserControllerIntegrationTest {
     @MockitoBean
     private UserServiceImpl userService;
 
-    //@Test
-    void dadoUsuario_quandoCriar_RetornarUsuarioCriado() throws Exception{
+    // @Test
+    void dadoUsuario_quandoCriar_RetornarUsuarioCriado() throws Exception {
 
     }
 
     @Test
+    @WithMockUser(username = "johndoe", roles = { "USER" })
     void testUpdateUser() throws Exception {
         UserDto updatedUserDto = new UserDto(1L, "John Doe Updated", "johndoe", "johndoe@example.com", null, null);
 
-        UserDetailsResponse response = new UserDetailsResponse(1L, "John Doe Updated", "johndoe", "johndoe@example.com");
+        UserDetailsResponse response = new UserDetailsResponse(1L, "John Doe Updated", "johndoe",
+                "johndoe@example.com");
 
-        Mockito.when(userService.updateUser(updatedUserDto)).thenReturn(updatedUserDto);
+        Mockito.when(userService.updateUser(Mockito.any(UserDto.class))).thenReturn(updatedUserDto);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(response)))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(response)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.fullName").value(updatedUserDto.fullName()));
 
-        Mockito.verify(userService, Mockito.times(1)).updateUser(updatedUserDto);
+        Mockito.verify(userService, Mockito.times(1)).updateUser(Mockito.any(UserDto.class));
     }
-
-
-
-
-
-
-
-
 
 }
