@@ -9,13 +9,13 @@ public class UserRepositoryIntegrationTest {
     UserRepository userRepository;
 
     void DadoUsuario_QuandoBuscarPorId_RetornarUsuario(){
-when(userService.findById(1L)).thenReturn(new UserDTO(1L, "maria", "maria@email.com"));
+        UserEntity foundUser = userRepository.findById(savedUser.getId())
+    .orElseThrow(() -> new AssertionError("O usuário deveria ser encontrado pelo ID."));
 
-        mvc.perform(get("/api/users/1"))
-           .andExpect(status().isOk())
-           .andExpect(jsonPath("$.id").value(1))
-           .andExpect(jsonPath("$.name").value("maria"));
-   
-}
+        assertEquals(savedUser.getId(), foundUser.getId());
+        assertEquals("maria", foundUser.getUsername());
+        assertEquals("maria@email.com", foundUser.getEmail());
+        assertEquals("Maria da Silva", foundUser.getFullName());
+    }
 
 }
