@@ -145,6 +145,13 @@ public class UserRepositoryIntegrationTest {
     
     //Beatriz
     void DadoUsuario_QuandoBuscarPorId_RetornarUsuario(){
-    
+        UserEntity foundUser = userRepository.findById(savedUser.getId())
+    .orElseThrow(() -> new AssertionError("O usuário deveria ser encontrado pelo ID."));
+
+        assertEquals(savedUser.getId(), foundUser.getId());
+        assertEquals("maria", foundUser.getUsername());
+        assertEquals("maria@email.com", foundUser.getEmail());
+        assertEquals("Maria da Silva", foundUser.getFullName());
     }
+
 }
