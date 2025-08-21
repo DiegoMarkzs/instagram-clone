@@ -42,7 +42,7 @@ public class UserControllerIntegrationTest {
 
     @Test
     @WithMockUser(username = "johndoe", roles = { "USER" })
-    void testDeleteUser_integration() throws Exception {
+    void testDeleteUser() throws Exception {
         UserEntity user = new UserEntity();
         user.setFullName("Test User");
         user.setUsername("testuser");
