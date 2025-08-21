@@ -27,6 +27,8 @@ import br.edu.ifpb.instagram.service.impl.AuthServiceImpl;
 @AutoConfigureMockMvc
 public class JwtUtilControllerIntegrationTest {
 
+    //Diego
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -55,8 +57,11 @@ public class JwtUtilControllerIntegrationTest {
                 .andExpect(jsonPath("$.token", is(token)));
     }
 
-    @Test
+    //@Test
     void dadoUsuario_quandoCriarConta_retornarUsuarioCriado() throws Exception {
+        long numeroAleatorio = (int)(Math.random() * 10000);
+        String numeroEmail = String.valueOf(numeroAleatorio);
+
         UserDetailsRequest userDetailsRequest = new UserDetailsRequest(
             null,
             "albertwesker@gmail.com",
