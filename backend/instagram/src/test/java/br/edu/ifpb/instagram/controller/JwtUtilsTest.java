@@ -35,7 +35,7 @@ class JwtUtilsTest {
     @InjectMocks
     private JwtUtils jwtUtils = new JwtUtils();
 
-    // DIego
+    // Minha pessoa
 
     @Test
     void testGenerateToken() {
