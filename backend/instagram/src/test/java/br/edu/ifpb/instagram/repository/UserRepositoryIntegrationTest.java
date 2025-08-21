@@ -28,9 +28,16 @@ public class UserRepositoryIntegrationTest {
     void DadoUsuario_quandoAtualizar_AtualizarNoBanco(){
 
     }
+    
+    //READ
+    //Beatriz
+    void DadoUsuario_QuandoBuscarPorId_RetornarUsuario(){
 
-    //DELETE
-    //Yasmiiin 
+    }
+
+
+
+ 
     @Test
     void deleteUser_existingUser_removesFromDatabase() {
         UserEntity user = new UserEntity();
@@ -47,11 +54,5 @@ public class UserRepositoryIntegrationTest {
         userRepository.deleteById(userId);
 
         assertFalse(userRepository.existsById(userId));
-    }
-
-    //READ
-    //Beatriz
-    void DadoUsuario_QuandoBuscarPorId_RetornarUsuario(){
-
     }
 }

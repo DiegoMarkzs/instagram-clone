@@ -36,6 +36,10 @@ public class UserControllerIntegrationTest {
     @MockitoBean
     private UserServiceImpl userService;
 
+
+
+   
+   
     @Test
     @WithMockUser(username = "johndoe", roles = { "USER" })
     void testDeleteUser() throws Exception {
