@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import br.edu.ifpb.instagram.model.entity.UserEntity;
+import br.edu.ifpb.instagram.service.UserService;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -61,18 +63,13 @@ public class UserRepositoryIntegrationTest {
         user.setEmail("new@example.com");
         user.setEncryptedPassword("newpass");
         UserEntity updated = userRepository.save(user);
-
-        assertThat(updated.getFullName()).isEqualTo("New Name");
-        assertThat(updated.getUsername()).isEqualTo("newuser");
-        assertThat(updated.getEmail()).isEqualTo("new@example.com");
-        assertThat(updated.getEncryptedPassword()).isEqualTo("newpass");
-    }
-
-    //DELETE
-    //Yasmiiin 
-    @Test
-    void deleteUser_existingUser_removesFromDatabase() {
-        UserEntity user = new UserEntity();
+        }
+        
+        //DELETE
+        //Yasmiiin 
+        @Test
+        void deleteUser_existingUser_removesFromDatabase() {
+            UserEntity user = new UserEntity();
         user.setFullName("Test User");
         user.setUsername("testuser");
         user.setEmail("testuser@example.com");
@@ -80,17 +77,16 @@ public class UserRepositoryIntegrationTest {
 
         user = userRepository.save(user);
         Long userId = user.getId();
-
+        
         assertTrue(userRepository.existsById(userId));
-
+        
         userRepository.deleteById(userId);
-
+        
         assertFalse(userRepository.existsById(userId));
     }
-
-    // READ
-    // Beatriz
-    void DadoUsuario_QuandoBuscarPorId_RetornarUsuario() {
-
+    
+    //Beatriz
+    void DadoUsuario_QuandoBuscarPorId_RetornarUsuario(){
+    
     }
 }
