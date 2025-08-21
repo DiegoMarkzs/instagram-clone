@@ -30,7 +30,8 @@ import jakarta.transaction.Transactional;
 //@DataJpaTest
 //@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) // Com ANY não funciona
 
-@SpringBootTest
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 
 // Serve pra remover os dados do banco depois do teste ser realizado
 @Transactional
@@ -42,7 +43,7 @@ public class UserRepositoryIntegrationTest {
     @Autowired
     private EntityManager entityManager;
 
-    //CREATE
+    // CREATE
     // CREATE
     @Test
     // Carina
@@ -64,7 +65,8 @@ public class UserRepositoryIntegrationTest {
 
     @Test
     void DadoUsuarioComEmailExistente_quandoSalvar_DeveLancarExcecao() {
-        //alterei alguns nomes porque tava dando erro de duplicidade com dados antigos, nao sei como
+        // alterei alguns nomes porque tava dando erro de duplicidade com dados antigos,
+        // nao sei como
         UserEntity user1 = new UserEntity();
         user1.setUsername("usuario1");
         user1.setEmail("duplicate1@email.com");
@@ -78,19 +80,18 @@ public class UserRepositoryIntegrationTest {
         user2.setEmail("duplicate1@email.com"); // mesmo email
         user2.setFullName("User Two");
         user2.setEncryptedPassword("encodedPassword2");
-        // Essa logica deve ficar apenas no assertThrows, se não da erro antes do esperado
+        // Essa logica deve ficar apenas no assertThrows, se não da erro antes do
+        // esperado
         // userRepository.save(user2);
 
-        //O tipo de excessão mostrado no docker foi de ConstraintViolationException
+        // O tipo de excessão mostrado no docker foi de ConstraintViolationException
         assertThrows(ConstraintViolationException.class, () -> {
             userRepository.save(user2);
             entityManager.flush(); // o flush serve pra forçar o envio de todas as alterações pendentes pro BD
         });
 
-
-
     }
-    
+
     @Test
     void DadoUsuarioComFullNameNulo_quandoSalvar_DeveLancarExcecao() {
         UserEntity user = new UserEntity();
@@ -104,8 +105,8 @@ public class UserRepositoryIntegrationTest {
         });
     }
 
-    //UPDATE
-    //Winiicius
+    // UPDATE
+    // Winiicius
     @Test
     void updateUser_shouldUpdateFieldsCorrectly() {
 
@@ -121,13 +122,13 @@ public class UserRepositoryIntegrationTest {
         user.setEmail("new@example.com");
         user.setEncryptedPassword("newpass");
         UserEntity updated = userRepository.save(user);
-        }
-        
-        //DELETE
-        //Yasmiiin 
-        @Test
-        void deleteUser_existingUser_removesFromDatabase() {
-            UserEntity user = new UserEntity();
+    }
+
+    // DELETE
+    // Yasmiiin
+    @Test
+    void deleteUser_existingUser_removesFromDatabase() {
+        UserEntity user = new UserEntity();
         user.setFullName("Test User");
         user.setUsername("testuser");
         user.setEmail("testuser@example.com");
@@ -135,23 +136,33 @@ public class UserRepositoryIntegrationTest {
 
         user = userRepository.save(user);
         Long userId = user.getId();
-        
+
         assertTrue(userRepository.existsById(userId));
-        
+
         userRepository.deleteById(userId);
-        
+
         assertFalse(userRepository.existsById(userId));
     }
-    
-    //Beatriz
-    void DadoUsuario_QuandoBuscarPorId_RetornarUsuario(){
-        UserEntity foundUser = userRepository.findById(savedUser.getId())
-    .orElseThrow(() -> new AssertionError("O usuário deveria ser encontrado pelo ID."));
 
-        assertEquals(savedUser.getId(), foundUser.getId());
-        assertEquals("maria", foundUser.getUsername());
-        assertEquals("maria@email.com", foundUser.getEmail());
-        assertEquals("Maria da Silva", foundUser.getFullName());
+    //Beatriz
+    @Test
+    void dadoUsuario_QuandoBuscarPorId_RetornarUsuario() {
+
+        UserEntity user = new UserEntity();
+        user.setUsername("maria");
+        user.setEmail("maria@email.com");
+        user.setFullName("Maria da Silva");
+        user.setEncryptedPassword("encodedPassword");
+
+        UserEntity savedUser = userRepository.save(user);
+
+        UserEntity foundUser = userRepository.findById(savedUser.getId())
+                .orElseThrow(() -> new AssertionError("O usuário deveria ser encontrado pelo ID."));
+
+        assertEquals(savedUser.getId(), foundUser.getId(), "Os IDs dos usuários não coincidem.");
+        assertEquals("maria", foundUser.getUsername(), "O nome de usuário não corresponde.");
+        assertEquals("maria@email.com", foundUser.getEmail(), "O email não corresponde.");
+        assertEquals("Maria da Silva", foundUser.getFullName(), "O nome completo não corresponde.");
     }
 
 }
