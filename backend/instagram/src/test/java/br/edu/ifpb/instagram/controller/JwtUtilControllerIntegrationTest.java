@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import br.edu.ifpb.instagram.model.request.LoginRequest;
 import br.edu.ifpb.instagram.model.request.UserDetailsRequest;
 import br.edu.ifpb.instagram.service.impl.AuthServiceImpl;
+import jakarta.transaction.Transactional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -41,6 +42,8 @@ public class JwtUtilControllerIntegrationTest {
     @MockitoBean
     private Authentication authentication;
 
+    
+
     @Test
     void dadoUsuario_quandoLogar_retornarToken() throws Exception {
         LoginRequest loginRequest = new LoginRequest("usuarioTeste", "senha123");
@@ -57,26 +60,27 @@ public class JwtUtilControllerIntegrationTest {
                 .andExpect(jsonPath("$.token", is(token)));
     }
 
-    //@Test
+    @Transactional
+    @Test
     void dadoUsuario_quandoCriarConta_retornarUsuarioCriado() throws Exception {
-        long numeroAleatorio = (int)(Math.random() * 10000);
+        long numeroAleatorio = System.currentTimeMillis();
         String numeroEmail = String.valueOf(numeroAleatorio);
 
         UserDetailsRequest userDetailsRequest = new UserDetailsRequest(
             null,
-            "albertwesker@gmail.com",
+            "albertwesker" + numeroEmail + "@gmail.com",
             "umbrella123",
-            "Albert wesker",
-            "Albertowyskas"
+            "Albert wesker"+numeroEmail,
+            "Albertowyskas"+numeroEmail
         );
 
          mockMvc.perform(post("/auth/signup")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(userDetailsRequest)))
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.email", is("albertwesker@gmail.com")))
-            .andExpect(jsonPath("$.fullName", is("Albert wesker")))
-            .andExpect(jsonPath("$.username", is("Albertowyskas")));
+            .andExpect(jsonPath("$.email", is("albertwesker" + numeroEmail + "@gmail.com")))
+            .andExpect(jsonPath("$.fullName", is("Albert wesker"+numeroEmail)))
+            .andExpect(jsonPath("$.username", is("Albertowyskas"+numeroEmail)));
 
         
       
