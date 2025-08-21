@@ -9,5 +9,4 @@ class InstagramApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

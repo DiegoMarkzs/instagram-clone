@@ -26,7 +26,6 @@ public class UserEntity implements Serializable {
     @Column(nullable = false, length = 120, unique = true)
     private String email;
 
-
     public long getId() {
         return id;
     }
@@ -66,5 +65,4 @@ public class UserEntity implements Serializable {
     public void setEmail(String email) {
         this.email = email;
     }
-
 }
