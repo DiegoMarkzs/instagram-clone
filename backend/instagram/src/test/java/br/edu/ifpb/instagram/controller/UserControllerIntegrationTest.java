@@ -44,12 +44,7 @@ public class UserControllerIntegrationTest {
 
     @MockitoBean
     private UserServiceImpl userService;
-
-    // @Test
-    void dadoUsuario_quandoCriar_RetornarUsuarioCriado() throws Exception {
-
-    }
-
+    
     //Winiicius
     @Test
     @WithMockUser(username = "johndoe", roles = { "USER" })

@@ -44,10 +44,9 @@ public class UserRepositoryIntegrationTest {
     private EntityManager entityManager;
 
     // CREATE
-    // CREATE
     @Test
     // Carina
-    void DadoUsuario_quandoSalvar_PersistirNoBanco() {
+    void shouldPersist_WhenSaveValidUser() {
 
         UserEntity user = new UserEntity();
         user.setUsername("new_name");
@@ -64,7 +63,7 @@ public class UserRepositoryIntegrationTest {
     }
 
     @Test
-    void FindUserById_ReturnsUser() {
+    void shouldThrowException_whenSavingUserWithDuplicateEmail() {
         // alterei alguns nomes porque tava dando erro de duplicidade com dados antigos,
         // nao sei como
         UserEntity user1 = new UserEntity();
@@ -93,7 +92,7 @@ public class UserRepositoryIntegrationTest {
     }
 
     @Test
-    void DadoUsuarioComFullNameNulo_quandoSalvar_DeveLancarExcecao() {
+    void shouldThrowException_whenSavingUserWithNullFullName() {
         UserEntity user = new UserEntity();
         user.setUsername("user1");
         user.setEmail("duplicate@email.com");
