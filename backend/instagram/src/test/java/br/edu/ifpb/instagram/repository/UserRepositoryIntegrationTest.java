@@ -64,7 +64,7 @@ public class UserRepositoryIntegrationTest {
     }
 
     @Test
-    void DadoUsuarioComEmailExistente_quandoSalvar_DeveLancarExcecao() {
+    void FindUserById_ReturnsUser() {
         // alterei alguns nomes porque tava dando erro de duplicidade com dados antigos,
         // nao sei como
         UserEntity user1 = new UserEntity();
